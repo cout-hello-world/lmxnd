@@ -1,7 +1,9 @@
-import com.rapplogic.xbee.api.XBee;
-import com.rapplogic.xbee.api.XBeeException;
+package lmxnd;
+
+import com.digi.xbee.api.XBee;
 
 public class Lmxnd {
+	/*
 	public static void main(String[] args) {
 		XBee xbee = new XBee();
 		try {
@@ -11,5 +13,10 @@ public class Lmxnd {
 			System.err.println("Fatal error. Exiting with code 1.");
 			System.exit(1);
 		}
+	}
+	*/
+	public static void main(String[] args) {
+		System.out.println("Hello, world");
+		XBee xbee = new XBee();
 	}
 }
