@@ -19,45 +19,60 @@ public class XBeeNetwork {
 	 *             integral or floating point decimal).
 	 * @throws NullPointerException if either argument is null
 	 * @throws IllegalArgumentException if the {@Code data}
-	 *                                  is imporperly formatted
+	 *                                  is improperly formatted
 	 */
 	public synchronized void update(byte[] address, String data) {
-		/* First, get a timestamp for the update operation */
+		// First, get a timestamp for the update operation
 		long timestamp = System.currentTimeMillis() / 1000L;
 
-		/* Check for errors so exception can be thrown before instance variables
-		 * are modified. */
+		// Check for errors so an exception can be thrown before instance
+		// variables are modified.
 		if (address == null || data == null) {
 			throw new NullPointerException(
 			    "Arguments to update method must not be null");
 		}
+		
+		// This array will be used later to populate the values in the map,
+		// but it must be checked here to ensure that enough data was provided.
 		String[] dataArr = data.split("\\s+");
 		if (dataArr.length != 2) {
 			throw new IllegalArgumentException(
 			"Key value pair not present in data parameter");
 		}
+
+		// Verify that the input parses as a number.
 		try {
 			Double.parseDouble(dataArr[1]);
 		} catch (NumberFormatException ex) {
 			throw new IllegalArgumentException(
 			    "The value in the data string is not a number");
 		}
-		
+
+		 // The following constructs the parts of the code map and places them
+		 // into the instances instance variables
+		XBeeAddress addr = new XBeeAddress(address);
 		Quantity quantity = new Quantity(dataArr[0]);
 		Value val = new Value(dataArr[1], timestamp);
-		XBeeAddress addr = new XBeeAddress(address);
-		
-		/* Todo... if contains, etc, etc */
+
+		// Create value for address is none exists
+		if (!network.containsKey(addr)) {
+			network.put(addr, new HashMap<Quantity, Value>());
+		}
+
+		// Now {@code network.get(addr) != null}, the following is safe.
+		// Note that this will overwrite an existing value for {@code network}.
+		network.get(addr).put(quantity, val);
 	}
 
 	/* Private */
 
-	HashMap<XBeeAddress, HashMap<Quantity, Value>> network;
+	private Map<XBeeAddress, HashMap<Quantity, Value>> network =
+	    new HashMap<XBeeAddress, HashMap<Quantity, Value>>();
 
 	private static class XBeeAddress {
 		/**
-		 * This constructor takes a byte array and constucts an object with an
-		 * independant internal representation of the byte array which can be
+		 * This constructor takes a byte array and constructs an object with an
+		 * independent internal representation of the byte array which can be
 		 * accessed via a {@code toString} method.
 		 */
 			public XBeeAddress(byte[] address) {
