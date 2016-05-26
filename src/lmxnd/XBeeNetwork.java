@@ -64,9 +64,41 @@ public class XBeeNetwork {
 		network.get(addr).put(quantity, val);
 	}
 
+	public synchronized String view() {
+		// Fix the JSON
+		StringBuilder json = new StringBuilder();
+		json.append("{\n\t\"addresses\": [\n");
+		for (Map.Entry<XBeeAddress, Map<Quantity, Value>> address : network) {
+			XBeeAddress key = address.getKey();
+			Map<Quantity, Value> qvMap = address.getValue();
+			json.append("\t\t\"" + key.toString() + "\": {\n");
+			for (Map.Entry<Quantity, Value> pair :qvMap) {
+				Quantity q = pair.getKey();
+				Value v = pair.getKey();
+				json.append("\t\t\t\"" + q.toString() +
+				            "\": {\n\t\t\t\t\": " + v.
+				            ",\n");
+			}
+
+			// Remove trailing comma to comply with JSON spec
+			// This works because the previous loop ran (and added a comma) by
+			// class invariant.
+			json.deleteCharAt(json.lastIndexOf(","));
+			
+			json.append("\t\t},\n");
+		}
+
+		if (!network.isEmpty()) {
+			json.deleteCharAt(json.lastIndexOf(","));
+		}
+
+		json.append("\t]\n}\n");
+		return json.toString();
+	}
+
 	/* Private */
 
-	private Map<XBeeAddress, HashMap<Quantity, Value>> network =
+	private Map<XBeeAddress, Map<Quantity, Value>> network =
 	    new HashMap<XBeeAddress, HashMap<Quantity, Value>>();
 
 	private static class XBeeAddress {
