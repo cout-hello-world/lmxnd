@@ -67,17 +67,22 @@ public class XBeeNetwork {
 	public synchronized String view() {
 		// Fix the JSON
 		StringBuilder json = new StringBuilder();
+
 		json.append("{\n\t\"addresses\": [\n");
-		for (Map.Entry<XBeeAddress, Map<Quantity, Value>> address : network) {
+
+		for (Map.Entry<XBeeAddress, HashMap<Quantity, Value>> address :
+			    network.entrySet()) {
+
 			XBeeAddress key = address.getKey();
 			Map<Quantity, Value> qvMap = address.getValue();
 			json.append("\t\t\"" + key.toString() + "\": {\n");
-			for (Map.Entry<Quantity, Value> pair :qvMap) {
+
+			for (Map.Entry<Quantity, Value> pair : qvMap.entrySet()) {
 				Quantity q = pair.getKey();
-				Value v = pair.getKey();
-				json.append("\t\t\t\"" + q.toString() +
-				            "\": {\n\t\t\t\t\"value\": \"" + v.value() +
-				            "\"\n\t\t\t\t: " + v.getTimestamp() +
+				Value v = pair.getValue();
+				json.append("\t\t\t\"quantity\": \"" + q.toString() +
+				            "\": {\n\t\t\t\t\"value\": " + v.getValue() +
+				            ",\n\t\t\t\t\"timestamp\": " + v.getTimestamp() +
 							"\n\t\t\t},\n");
 			}
 
@@ -90,6 +95,7 @@ public class XBeeNetwork {
 		}
 
 		if (!network.isEmpty()) {
+			// The outer loop ran at least once, so there is a comma to remove.
 			json.deleteCharAt(json.lastIndexOf(","));
 		}
 
@@ -99,7 +105,7 @@ public class XBeeNetwork {
 
 	/* Private */
 
-	private Map<XBeeAddress, Map<Quantity, Value>> network =
+	private HashMap<XBeeAddress, HashMap<Quantity, Value>> network =
 	    new HashMap<XBeeAddress, HashMap<Quantity, Value>>();
 
 	private static class XBeeAddress {
