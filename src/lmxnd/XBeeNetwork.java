@@ -76,8 +76,9 @@ public class XBeeNetwork {
 				Quantity q = pair.getKey();
 				Value v = pair.getKey();
 				json.append("\t\t\t\"" + q.toString() +
-				            "\": {\n\t\t\t\t\": " + v.
-				            ",\n");
+				            "\": {\n\t\t\t\t\"value\": \"" + v.value() +
+				            "\"\n\t\t\t\t: " + v.getTimestamp() +
+							"\n\t\t\t},\n");
 			}
 
 			// Remove trailing comma to comply with JSON spec
