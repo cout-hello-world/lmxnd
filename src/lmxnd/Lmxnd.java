@@ -17,6 +17,35 @@ public class Lmxnd {
 	*/
 	public static void main(String[] args) {
 		System.out.println("Hello, world");
-		XBee xbee = new XBee();
+		/*
+		 * XBee xbee = new XBee();
+		 * xbee.open();
+		 */
+		
+		XBeeNetwork network = new XBeeNetwork();
+		runServer(network, 1337);
+	}
+
+	private static void runServer(XBeeNetwork network, int port)
+	                                                     throws IOException {
+		ServerSocket serverSocket = new ServerSocket(port);
+		
+		while (true) {
+			Socket socket = serverSocket.accept();
+
+	}
+
+	private static class RequestServer implements Runnable {
+		public ServerLogic(Socket connection, XBeeNetwork network) {
+			conn = connection;
+			net = network;
+		}
+
+		public void run() {
+			InputStream in = conn.getInputStream();
+			OutputStream out = conn.getOutputStream();
+
+		private Socket conn;
+		private XBeeNetwork net;
 	}
 }
